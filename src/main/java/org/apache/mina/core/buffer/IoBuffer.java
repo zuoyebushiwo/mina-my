@@ -38,7 +38,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.EnumSet;
 import java.util.Set;
 
-//import org.apache.mina.core.session.IoSession;
+import org.apache.mina.core.session.IoSession;
 
 /**
  * A byte buffer used by MINA applications.
