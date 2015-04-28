@@ -20,15 +20,27 @@
 package org.apache.mina.core.session;
 
 /**
- * The session state. A session can be in three different state :
- * <ul>
- *   <li>OPENING : The session has not been fully created</li>
- *   <li>OPENED : The session is opened</li>
- *   <li>CLOSING :  The session is closing</li>
- * </ul>
+ * A {@link RuntimeException} that is thrown when the initialization of
+ * an {@link IoSession} fails.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public enum SessionState {
-    OPENING, OPENED, CLOSING
+public class IoSessionInitializationException extends RuntimeException {
+    private static final long serialVersionUID = -1205810145763696189L;
+
+    public IoSessionInitializationException() {
+        super();
+    }
+
+    public IoSessionInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public IoSessionInitializationException(String message) {
+        super(message);
+    }
+
+    public IoSessionInitializationException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -1,6 +1,7 @@
 package org.apache.mina.core.session;
 
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoService;
 
 public abstract class AbstractIoSession implements IoSession {
 
