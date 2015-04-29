@@ -2,10 +2,14 @@ package org.apache.mina.core.service;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilterChainBuilder;
 import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.session.DefaultIoSessionDataStructureFactory;
+import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.core.session.IoSessionDataStructureFactory;
@@ -15,6 +19,64 @@ import org.slf4j.LoggerFactory;
 public class AbstractIoService implements IoService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIoService.class);
+	
+	private static final AtomicInteger id = new AtomicInteger();
+	
+	private final String threadName;
+	
+	private final Executor executor;
+	
+	private final boolean createdExecutor;
+	
+	private IoHandler handler;
+	
+	protected final IoSessionConfig sessionConfig;
+	
+	private final IoServiceListener serviceActivationListener = new IoServiceListener() {
+		
+		public void serviceActivated(IoService service) throws Exception {
+			// Update lastIoTime.
+			AbstractIoService s = (AbstractIoService) service;
+			IoServiceStatistics _stats = s.getStatistics();
+			_stats.setLastReadTime(s.getActivationTime());
+            _stats.setLastWriteTime(s.getActivationTime());
+            _stats.setLastThroughputCalculationTime(s.getActivationTime());
+
+		}
+		
+		public void serviceDeactivated(IoService service) throws Exception {
+            // Empty handler
+        }
+
+        public void serviceIdle(IoService service, IdleStatus idleStatus) throws Exception {
+            // Empty handler
+        }
+
+        public void sessionCreated(IoSession session) throws Exception {
+            // Empty handler
+        }
+
+        public void sessionClosed(IoSession session) throws Exception {
+            // Empty handler
+        }
+
+        public void sessionDestroyed(IoSession session) throws Exception {
+            // Empty handler
+        }
+        
+	};
+	
+	private IoFilterChainBuilder filterChainBuilder = new DefaultIoFilterChainBuilder();
+	
+	private IoSessionDataStructureFactory sessionDataStructureFactory = new DefaultIoSessionDataStructureFactory();
+	
+	private final IoServiceListenerSupport listeners;
+	
+	protected final Object disposalLock = new Object();
+	
+	private volatile boolean disposing;
+	
+	private volatile boolean disposed;
 	
 	public TransportMetadata getTransportMetadata() {
 		// TODO Auto-generated method stub
