@@ -33,7 +33,6 @@ import java.io.Serializable;
  * 
  * This will create the <b>SimpleIoProcessorPool.processor@7DE45C99</b> key
  * which will be stored in the session map.<br>
- * 
  * Such an attributeKey is mainly useful for debug purposes.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
