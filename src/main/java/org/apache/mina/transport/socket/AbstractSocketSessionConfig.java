@@ -27,27 +27,26 @@ import org.apache.mina.core.session.IoSessionConfig;
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public abstract class AbstractDatagramSessionConfig extends AbstractIoSessionConfig implements DatagramSessionConfig {
+public abstract class AbstractSocketSessionConfig extends AbstractIoSessionConfig implements SocketSessionConfig {
 
-    private static final boolean DEFAULT_CLOSE_ON_PORT_UNREACHABLE = true;
-
-    private boolean closeOnPortUnreachable = DEFAULT_CLOSE_ON_PORT_UNREACHABLE;
-
-    protected AbstractDatagramSessionConfig() {
+    protected AbstractSocketSessionConfig() {
         // Do nothing
     }
 
     @Override
-    protected void doSetAll(IoSessionConfig config) {
-        if (!(config instanceof DatagramSessionConfig)) {
+    protected final void doSetAll(IoSessionConfig config) {
+        if (!(config instanceof SocketSessionConfig)) {
             return;
         }
 
-        if (config instanceof AbstractDatagramSessionConfig) {
+        if (config instanceof AbstractSocketSessionConfig) {
             // Minimize unnecessary system calls by checking all 'propertyChanged' properties.
-            AbstractDatagramSessionConfig cfg = (AbstractDatagramSessionConfig) config;
-            if (cfg.isBroadcastChanged()) {
-                setBroadcast(cfg.isBroadcast());
+            AbstractSocketSessionConfig cfg = (AbstractSocketSessionConfig) config;
+            if (cfg.isKeepAliveChanged()) {
+                setKeepAlive(cfg.isKeepAlive());
+            }
+            if (cfg.isOobInlineChanged()) {
+                setOobInline(cfg.isOobInline());
             }
             if (cfg.isReceiveBufferSizeChanged()) {
                 setReceiveBufferSize(cfg.getReceiveBufferSize());
@@ -58,15 +57,24 @@ public abstract class AbstractDatagramSessionConfig extends AbstractIoSessionCon
             if (cfg.isSendBufferSizeChanged()) {
                 setSendBufferSize(cfg.getSendBufferSize());
             }
+            if (cfg.isSoLingerChanged()) {
+                setSoLinger(cfg.getSoLinger());
+            }
+            if (cfg.isTcpNoDelayChanged()) {
+                setTcpNoDelay(cfg.isTcpNoDelay());
+            }
             if (cfg.isTrafficClassChanged() && getTrafficClass() != cfg.getTrafficClass()) {
                 setTrafficClass(cfg.getTrafficClass());
             }
         } else {
-            DatagramSessionConfig cfg = (DatagramSessionConfig) config;
-            setBroadcast(cfg.isBroadcast());
+            SocketSessionConfig cfg = (SocketSessionConfig) config;
+            setKeepAlive(cfg.isKeepAlive());
+            setOobInline(cfg.isOobInline());
             setReceiveBufferSize(cfg.getReceiveBufferSize());
             setReuseAddress(cfg.isReuseAddress());
             setSendBufferSize(cfg.getSendBufferSize());
+            setSoLinger(cfg.getSoLinger());
+            setTcpNoDelay(cfg.isTcpNoDelay());
             if (getTrafficClass() != cfg.getTrafficClass()) {
                 setTrafficClass(cfg.getTrafficClass());
             }
@@ -74,13 +82,24 @@ public abstract class AbstractDatagramSessionConfig extends AbstractIoSessionCon
     }
 
     /**
-     * Returns <tt>true</tt> if and only if the <tt>broadcast</tt> property
+     * Returns <tt>true</tt> if and only if the <tt>keepAlive</tt> property
      * has been changed by its setter method.  The system call related with
      * the property is made only when this method returns <tt>true</tt>.  By
      * default, this method always returns <tt>true</tt> to simplify implementation
      * of subclasses, but overriding the default behavior is always encouraged.
      */
-    protected boolean isBroadcastChanged() {
+    protected boolean isKeepAliveChanged() {
+        return true;
+    }
+
+    /**
+     * Returns <tt>true</tt> if and only if the <tt>oobInline</tt> property
+     * has been changed by its setter method.  The system call related with
+     * the property is made only when this method returns <tt>true</tt>.  By
+     * default, this method always returns <tt>true</tt> to simplify implementation
+     * of subclasses, but overriding the default behavior is always encouraged.
+     */
+    protected boolean isOobInlineChanged() {
         return true;
     }
 
@@ -118,6 +137,28 @@ public abstract class AbstractDatagramSessionConfig extends AbstractIoSessionCon
     }
 
     /**
+     * Returns <tt>true</tt> if and only if the <tt>soLinger</tt> property
+     * has been changed by its setter method.  The system call related with
+     * the property is made only when this method returns <tt>true</tt>.  By
+     * default, this method always returns <tt>true</tt> to simplify implementation
+     * of subclasses, but overriding the default behavior is always encouraged.
+     */
+    protected boolean isSoLingerChanged() {
+        return true;
+    }
+
+    /**
+     * Returns <tt>true</tt> if and only if the <tt>tcpNoDelay</tt> property
+     * has been changed by its setter method.  The system call related with
+     * the property is made only when this method returns <tt>true</tt>.  By
+     * default, this method always returns <tt>true</tt> to simplify implementation
+     * of subclasses, but overriding the default behavior is always encouraged.
+     */
+    protected boolean isTcpNoDelayChanged() {
+        return true;
+    }
+
+    /**
      * Returns <tt>true</tt> if and only if the <tt>trafficClass</tt> property
      * has been changed by its setter method.  The system call related with
      * the property is made only when this method returns <tt>true</tt>.  By
@@ -126,19 +167,5 @@ public abstract class AbstractDatagramSessionConfig extends AbstractIoSessionCon
      */
     protected boolean isTrafficClassChanged() {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isCloseOnPortUnreachable() {
-        return closeOnPortUnreachable;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setCloseOnPortUnreachable(boolean closeOnPortUnreachable) {
-        this.closeOnPortUnreachable = closeOnPortUnreachable;
     }
 }
