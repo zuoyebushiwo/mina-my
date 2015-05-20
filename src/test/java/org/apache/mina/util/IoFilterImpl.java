@@ -19,25 +19,41 @@
  */
 package org.apache.mina.util;
 
-import org.apache.mina.core.buffer.IoBufferTest;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.core.filterchain.IoFilterChain;
 
 /**
- * The subtype of {@link Foo}.  It is used to test the serialization of inherited object
- * in {@link IoBufferTest}.
+ * Bogus implementation of {@link IoFilter} to test
+ * {@link IoFilterChain}.
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class Bar extends Foo {
+public class IoFilterImpl extends IoFilterAdapter {
+    private final char c;
 
-    private static final long serialVersionUID = -7360624845308368521L;
-
-    private int barValue;
-
-    public int getBarValue() {
-        return barValue;
+    public IoFilterImpl(char c) {
+        this.c = c;
     }
 
-    public void setBarValue(int barValue) {
-        this.barValue = barValue;
+    @Override
+    public int hashCode() {
+        return c;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof IoFilterImpl)) {
+            return false;
+        }
+        return this.c == ((IoFilterImpl) o).c;
+    }
+
+    @Override
+    public String toString() {
+        return "" + c;
     }
 }
