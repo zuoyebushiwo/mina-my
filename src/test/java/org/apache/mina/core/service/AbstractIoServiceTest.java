@@ -19,13 +19,7 @@
  */
 package org.apache.mina.core.service;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
+import junit.framework.Assert;
 import org.apache.mina.core.future.CloseFuture;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFuture;
@@ -41,6 +35,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 /**
  * test the AbstractIoService
  *
@@ -53,7 +54,7 @@ public class AbstractIoServiceTest {
     @Test
     public void testDispose() throws IOException, InterruptedException {
 
-        List<String> threadsBefore = getThreadNames();
+        List threadsBefore = getThreadNames();
 
         final IoAcceptor acceptor = new NioSocketAcceptor();
 
@@ -112,7 +113,7 @@ public class AbstractIoServiceTest {
         closeFuture.awaitUninterruptibly();
         acceptor.dispose(true);
 
-        List<String> threadsAfter = getThreadNames();
+        List threadsAfter = getThreadNames();
 
         System.out.println("threadsBefore = " + threadsBefore);
         System.out.println("threadsAfter  = " + threadsAfter);
